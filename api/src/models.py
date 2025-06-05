@@ -20,6 +20,15 @@ class Statut(Base):
     libelle:Mapped[str]=mapped_column(String(30),name="libelle_statut")
     tickets:Mapped[Optional[List["Ticket"]]]=relationship(back_populates="statut",default_factory=list)
 
+class Evenement(Base):
+    __tablename__="evenement"
+    id:Mapped[int]=mapped_column(name="id_evenement",primary_key=True,autoincrement=True,init=False)
+    id_agent:Mapped[int]=mapped_column(ForeignKey("agent.id_agent"))
+    id_ticket:Mapped[int]=mapped_column(ForeignKey("ticket.id_ticket"))
+    id_statut:Mapped[Statut]=mapped_column((ForeignKey("statut.id_statut")))
+    date_enregistrement:Mapped[datetime]=mapped_column(DateTime(timezone=True),server_default=func.now(),name="created_at",init=False)
+    agent=relationship("Agent",back_populates="evenements")
+    ticket=relationship("Ticket",back_populates="evenements")
 
 class Agent(Base):
     __tablename__="agent"
@@ -29,8 +38,9 @@ class Agent(Base):
     prenom:Mapped[str]=mapped_column(String(50),name="prenom_agent")
     telephone:Mapped[str]=mapped_column(String(20),name="telephone_agent")
     email:Mapped[str]=mapped_column(String(50),name="email_agent")
+    evenements:Mapped[Optional["Evenement"]]=relationship("Evenement",back_populates="agent",default=None)
     categorie:Mapped[Optional["Categorie"]]=relationship(back_populates="agents",default=None)
-    tickets:Mapped[Optional[List["Ticket"]]]=relationship(back_populates="agents",secondary="evenement",default_factory=list)
+    tickets:Mapped[Optional[List["Ticket"]]]=relationship(back_populates="agents",default_factory=list)
 
 class Ticket(Base):
     __tablename__="ticket"
@@ -41,14 +51,5 @@ class Ticket(Base):
     id_statut:Mapped[Optional[int]]=mapped_column(ForeignKey("statut.id_statut"),nullable=True,default=1)
     categorie:Mapped[Optional["Categorie"]]=relationship(back_populates="tickets",default=None)
     statut:Mapped[Optional["Statut"]]=relationship(back_populates="tickets",default=None)
+    evenements:'Mapped[Optional[Evenement]]'=relationship("Evenement",back_populates="ticket",default=None)
     agents:Mapped[Optional[List["Agent"]]]=relationship(back_populates="tickets",secondary="evenement",default_factory=list)
-
-class Evenement(Base):
-    __tablename__="evenement"
-    id:Mapped[int]=mapped_column(name="id_evenement",primary_key=True,autoincrement=True,init=False)
-    id_agent:Mapped[int]=mapped_column(ForeignKey("agent.id_agent"))
-    id_ticket:Mapped[int]=mapped_column(ForeignKey("ticket.id_ticket"))
-    date_enregistrement:Mapped[datetime]=mapped_column(DateTime(timezone=True),server_default=func.now(),name="created_at")
-
-
-    

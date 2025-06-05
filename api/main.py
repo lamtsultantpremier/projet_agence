@@ -1,4 +1,12 @@
-from src.models import Base
-from src.database import engine
+from fastapi import FastAPI
+from src.routes.agent import agent_router
+from src.routes.categorie import categorie_router
+from src.routes.ticket import ticket_router
+from src.routes.agent_ticket import agent_router_ticket
 
-Base.metadata.create_all(engine)
+app=FastAPI()
+
+app.include_router(agent_router)
+app.include_router(categorie_router)
+app.include_router(ticket_router)
+app.include_router(agent_router_ticket)

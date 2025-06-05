@@ -18,6 +18,13 @@ def get_agents(db:Session):
     all_users=db.query(Agent).all()
     return all_users
 
+def get_agent(id_agent:int,db:Session):
+    agent=db.get(Agent,id_agent)
+    if not agent:
+        return None
+    else:
+        return agent
+
 def delete_agent(db:Session,id_agent:int)->int:
     agent=db.query(Agent).get(id_agent)
     db.delete(agent)
@@ -32,13 +39,3 @@ def update_agent(db:Session,agent_id:int,agent_update:AgentUpate)->int:
     db.commit()
     db.refresh(agent_in_database)
     return agent_in_database.id_agent
-    
-
-
-# def create_catgorie(categorie:CreateCategorie,db:Session):
-#     categorie_dict=categorie.model_dump()
-#     categorie=Categorie(**categorie_dict)
-#     db.add(categorie)
-#     db.commit()
-#     db.refresh()
-#     return categorie.id_categorie
