@@ -9,3 +9,5 @@ def create_evenement(evenement_create:CreateEvenement,db:Session):
     db.commit()
     db.refresh(evenement)
     return evenement
+
+
